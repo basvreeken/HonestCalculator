@@ -7,10 +7,37 @@ msg_2 = 'Yes ... an interesting math operation. You\'ve slept through all ' \
 msg_3 = 'Yeah... division by zero. Smart move...'
 msg_4 = 'Do you want to store the result? (y / n):'
 msg_5 = 'Do you want to continue calculations? (y / n):'
+msg_6 = ' ... lazy'
+msg_7 = ' ... very lazy'
+msg_8 = ' ... very, very lazy'
+msg_9 = 'You are'
 valid_operations = {'+', '-', '*', '/'}
-memory = float(0)
+memory = 0
 play_again = False
 skip_check = False
+
+
+def check(v1, v2, v3):
+    global msg_6
+    global msg_7
+    global msg_8
+    global msg_9
+
+    msg = ''
+    if is_one_digit(v1) and is_one_digit(v2):
+        msg = msg + msg_6
+    if v1 == 1 or v2 == 1 and v3 == '*':
+        msg = msg + msg_7
+    if v1 == 0 or v2 == 0 and v3 == '*' or v3 == '-':
+        msg = msg + msg_8
+    if msg != '':
+        msg = msg_9 + msg
+        print(msg)
+
+
+def is_one_digit(v):
+    return -10 < v < 10 and type(v) == int
+
 
 while True:
     print(msg_0)
@@ -18,13 +45,15 @@ while True:
     x, oper, y = calc.split()
 
     if x == 'M':
-        x = str(memory)
+        x = memory
     if y == 'M':
-        y = str(memory)
+        y = memory
 
     try:
-        x = ast.literal_eval(x)
-        y = ast.literal_eval(y)
+        if type(x) == str:
+            x = ast.literal_eval(x)
+        if type(y) == str:
+            y = ast.literal_eval(y)
     except ValueError:
         print(msg_1)
         continue
@@ -32,6 +61,8 @@ while True:
     if oper not in valid_operations:
         print(msg_2)
         continue
+
+    check(x, y, oper)
 
     if oper == '+':
         result = x + y
