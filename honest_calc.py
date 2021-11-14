@@ -1,46 +1,62 @@
-import ast
-
-msg_0 = 'Enter an equation'
-msg_1 = 'Do you even know what numbers are? Stay focused!'
-msg_2 = 'Yes ... an interesting math operation. You\'ve slept through all ' \
-        'classes, haven\'t you?'
-msg_3 = 'Yeah... division by zero. Smart move...'
-msg_4 = 'Do you want to store the result? (y / n):'
-msg_5 = 'Do you want to continue calculations? (y / n):'
-msg_6 = ' ... lazy'
-msg_7 = ' ... very lazy'
-msg_8 = ' ... very, very lazy'
-msg_9 = 'You are'
+messages = ['Enter an equation',
+            'Do you even know what numbers are? Stay focused!',
+            'Yes ... an interesting math operation. You\'ve slept through '
+            'all classes, haven\'t you?',
+            'Yeah... division by zero. Smart move...',
+            'Do you want to store the result? (y / n):',
+            'Do you want to continue calculations? (y / n):',
+            ' ... lazy',
+            ' ... very lazy',
+            ' ... very, very lazy',
+            'You are',
+            'Are you sure? It is only one digit! (y / n)',
+            'Don\'t be silly! It\'s just one number! Add to the memory? (y / '
+            'n)',
+            'Last chance! Do you really want to embarrass yourself? (y / n)']
 valid_operations = {'+', '-', '*', '/'}
-memory = 0
+memory = float(0)
 play_again = False
 skip_check = False
 
 
 def check(v1, v2, v3):
-    global msg_6
-    global msg_7
-    global msg_8
-    global msg_9
+    global messages
 
     msg = ''
     if is_one_digit(v1) and is_one_digit(v2):
-        msg = msg + msg_6
+        msg = msg + messages[6]
     if v1 == 1 or v2 == 1 and v3 == '*':
-        msg = msg + msg_7
-    if v1 == 0 or v2 == 0 and v3 == '*' or v3 == '-':
-        msg = msg + msg_8
+        msg = msg + messages[7]
+    if (v1 == 0 or v2 == 0) and (v3 in ('*', '+', '-')):
+        msg = msg + messages[8]
     if msg != '':
-        msg = msg_9 + msg
+        msg = messages[9] + msg
         print(msg)
 
 
 def is_one_digit(v):
-    return -10 < v < 10 and type(v) == int
+    return -10 < v < 10 and v.is_integer()
+
+
+def save_to_memory(v):
+    if not is_one_digit(v):
+        return True
+    else:
+        msg_index = 10
+        while True:
+            print(messages[msg_index])
+            answer = input()
+            if answer == 'n':
+                return False
+            elif answer == 'y' and msg_index < 12:
+                msg_index += 1
+                continue
+            else:
+                return True
 
 
 while True:
-    print(msg_0)
+    print(messages[0])
     calc = input()
     x, oper, y = calc.split()
 
@@ -50,16 +66,14 @@ while True:
         y = memory
 
     try:
-        if type(x) == str:
-            x = ast.literal_eval(x)
-        if type(y) == str:
-            y = ast.literal_eval(y)
+        x = float(x)
+        y = float(y)
     except ValueError:
-        print(msg_1)
+        print(messages[1])
         continue
 
     if oper not in valid_operations:
-        print(msg_2)
+        print(messages[2])
         continue
 
     check(x, y, oper)
@@ -74,16 +88,17 @@ while True:
         try:
             result = x / y
         except ZeroDivisionError:
-            print(msg_3)
+            print(messages[3])
             continue
 
     print(float(result))
 
     while True:
-        print(msg_4)
+        print(messages[4])
         answer = input()
         if answer == 'y':
-            memory = result
+            if save_to_memory(result):
+                memory = result
             break
         elif answer == 'n':
             break
@@ -91,7 +106,7 @@ while True:
             continue
 
     while True:
-        print(msg_5)
+        print(messages[5])
         answer = input()
         if answer == 'y':
             play_again = True
